@@ -1,4 +1,4 @@
-from django.db import migrations, models
+from django.db import migrations
 
 
 def fill_in_new_buildings(apps, schema_editor):
