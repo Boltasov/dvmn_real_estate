@@ -69,7 +69,7 @@ class Complaint(models.Model):
     text = models.TextField(verbose_name='Текст жалобы')
 
     def __str__(self):
-        return f'{self.text[:20]})'
+        return f'{self.text[:20]}'
 
 
 class Owner(models.Model):
@@ -79,4 +79,4 @@ class Owner(models.Model):
     flats = models.ManyToManyField(Flat, verbose_name='Квартиры в собственности', related_name='owners')
 
     def __str__(self):
-        return f'{self.name})'
+        return f'{self.name}'
