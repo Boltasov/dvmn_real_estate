@@ -5,8 +5,6 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Flat(models.Model):
-    owner = models.CharField('ФИО владельца', max_length=200)
-    owners_phonenumber = models.CharField('Номер владельца', max_length=20)
     created_at = models.DateTimeField(
         'Когда создано объявление',
         default=timezone.now,
@@ -56,28 +54,28 @@ class Flat(models.Model):
         db_index=True
     )
 
-    likes = models.ManyToManyField(User, verbose_name='Кто лайкнул', blank=True)
-    owner_pure_phone = PhoneNumberField(verbose_name='Нормализованный номер владельца', blank=True)
+    likes = models.ManyToManyField(User, verbose_name='Кто лайкнул', blank=True, related_name='liked_flats')
 
     def __str__(self):
         return f'{self.town}, {self.address} ({self.price}р.)'
 
 
 class Complaint(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Кто жалуется', db_index=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Кто жалуется', db_index=True,
+                             related_name='complaints')
     flat = models.ForeignKey(Flat, on_delete=models.CASCADE, verbose_name='Квартира, на которую пожаловались',
-                             db_index=True)
+                             db_index=True, related_name='complaints')
     text = models.TextField(verbose_name='Текст жалобы', db_index=True)
 
     def __str__(self):
-        return f'{self.text[:20]}'
+        return self.text[:20]
 
 
 class Owner(models.Model):
     name = models.CharField(verbose_name='ФИО владельца', max_length=200, db_index=True)
-    owner_phonenumber = PhoneNumberField(verbose_name='Номер владельца')
-    owner_pure_phone = PhoneNumberField(verbose_name='Нормализованный номер владельца', blank=True)
+    phonenumber = PhoneNumberField(verbose_name='Номер владельца')
+    pure_phone = PhoneNumberField(verbose_name='Нормализованный номер владельца', blank=True)
     flats = models.ManyToManyField(Flat, verbose_name='Квартиры в собственности', related_name='owners', db_index=True)
 
     def __str__(self):
-        return f'{self.name}'
+        return self.name
